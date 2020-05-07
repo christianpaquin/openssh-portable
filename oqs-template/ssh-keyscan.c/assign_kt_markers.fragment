@@ -1,4 +1,4 @@
-{% set count = namespace(val=5) %}
+{% set count = namespace(val=7) %}
 {%- for sig in config['sigs'] %}
     {%- for variant in sig['variants'] %}
 #define KT_{{ variant['name'] }} ((uint64_t)1<<{{ count.val }})

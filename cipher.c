@@ -1,4 +1,4 @@
-/* $OpenBSD: cipher.c,v 1.111 2018/02/23 15:58:37 markus Exp $ */
+/* $OpenBSD: cipher.c,v 1.114 2020/01/23 10:24:29 dtucker Exp $ */
 /*
  * Author: Tatu Ylonen <ylo@cs.hut.fi>
  * Copyright (c) 1995 Tatu Ylonen <ylo@cs.hut.fi>, Espoo, Finland
@@ -51,6 +51,9 @@
 
 #include "openbsd-compat/openssl-compat.h"
 
+#ifndef WITH_OPENSSL
+#define EVP_CIPHER_CTX void
+#endif
 
 struct sshcipher_ctx {
 	int	plaintext;
@@ -138,6 +141,17 @@ cipher_alg_list(char sep, int auth_only)
 		rlen += nlen;
 	}
 	return ret;
+}
+
+const char *
+compression_alg_list(int compression)
+{
+#ifdef WITH_ZLIB
+	return compression ? "zlib@openssh.com,zlib,none" :
+	    "none,zlib@openssh.com,zlib";
+#else
+	return "none";
+#endif
 }
 
 u_int
